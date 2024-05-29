@@ -1,6 +1,11 @@
-## Foundry - NFT Contract 
+# Foundry-NFT
 
+In this project we will be building an NFT contract on we will deploy on anvil chain and interact with it. 
+Also we will be defining functions like:
 
+* Mint Function: This Function will Mint our NFT Token
+* Transfer Function: Allows to Trandfer NFT to different users
+* Burn Function: Allows to permanently delete/BURN the Token 
 
 ## Documentation
 

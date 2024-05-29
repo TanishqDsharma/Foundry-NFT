@@ -10,6 +10,7 @@ contract nftTest is Test {
 NFT nft;
 
 address USER = makeAddr("user");
+address receiver = makeAddr("receiver");
 
 uint256 public constant STARTING_BALANCE=1 ether;
     function setUp() external {
@@ -58,8 +59,10 @@ function testgetNFTbyAddress() public{
     assert(alltokens.length == 5);  
 }
 
+
+
 function testNFTisDeleted() public{
-    vm.prank(USER);
+    vm.startPrank(USER);
     console.log(USER);
 
     nft.mint("BAYC", "BAYC#1-LuCKY");
@@ -67,7 +70,10 @@ function testNFTisDeleted() public{
     console.log("Name :",_name);
     console.log("Description :",_description);
     console.log("Owner:",_owner);
-    
+    nft.transfer(receiver, 1);
+    vm.stopPrank();
+    uint256[] memory arr = nft.getNFTByAddress(receiver);
+    assert(arr[0]==1);
 }
 
 }
