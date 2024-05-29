@@ -44,8 +44,25 @@ function queryNFT(uint256 nftTokenId) public view returns(string memory _name, s
 
 }
 
+
+function deletebyNFTtokenId(address account, uint256 nftTokenId) internal {
+    //Storing all the NFT ids from a specific address to an array
+    uint256[] storage accountsNFTlist = nftOwnerTokens[account];
+    for (uint256 i = 0; i < accountsNFTlist.length; i++) {
+            if(accountsNFTlist[i]==nftTokenId){
+                accountsNFTlist[i] = accountsNFTlist[accountsNFTlist.length-1];
+                accountsNFTlist.pop;
+            }
+            break;
+    }
+
+}
+
+
 function getNFTByAddress(address owner_Addr) public view returns(uint256[] memory) {
     return nftOwnerTokens[owner_Addr];
     }
+
+
 
 }
