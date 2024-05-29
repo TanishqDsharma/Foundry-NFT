@@ -58,8 +58,20 @@ function deletebyNFTtokenId(address account, uint256 nftTokenId) internal {
 
 }
 
+function transfer(address receiver, uint256 nftTokenId) public{
+
+    require(msg.sender!=address(0),"Invalid recipient");
+    require(nftTokenId>=1&&nftTokenId<nftCounter,"Invalid token ID");
+    NftToken storage nftToken = nftTokens[nftTokenId];
+    require(msg.sender==nftToken.owner,"You are not the owner");
+    nftToken.owner=receiver;
+    deletebyNFTtokenId(msg.sender,nftTokenId);
+    nftOwnerTokens[receiver].push(nftTokenId);
+}
+
 
 function getNFTByAddress(address owner_Addr) public view returns(uint256[] memory) {
+
     return nftOwnerTokens[owner_Addr];
     }
 

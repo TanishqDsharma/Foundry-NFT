@@ -58,4 +58,16 @@ function testgetNFTbyAddress() public{
     assert(alltokens.length == 5);  
 }
 
+function testNFTisDeleted() public{
+    vm.prank(USER);
+    console.log(USER);
+
+    nft.mint("BAYC", "BAYC#1-LuCKY");
+    (string memory _name, string memory _description, address _owner) = nft.queryNFT(1);
+    console.log("Name :",_name);
+    console.log("Description :",_description);
+    console.log("Owner:",_owner);
+    
+}
+
 }
