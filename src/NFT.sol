@@ -71,6 +71,16 @@ function transfer(address receiver, uint256 nftTokenId) public{
 }
 
 
+
+function burnNft(uint256 nftTokenId) public {
+    require(nftTokenId>=1&&nftTokenId<nftCounter,"Please Pass Valid nft ID");
+    NftToken memory nftToken = nftTokens[nftTokenId];
+    require(msg.sender==nftToken.owner,"You don't own this token");
+    deletebyNFTtokenId(msg.sender,nftTokenId);
+    delete nftTokens[nftTokenId];
+}
+
+/** Getter Functions */
 function getNFTByAddress(address owner_Addr) public view returns(uint256[] memory) {
 
     return nftOwnerTokens[owner_Addr];
