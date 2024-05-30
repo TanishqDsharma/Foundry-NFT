@@ -51,9 +51,10 @@ function deletebyNFTtokenId(address account, uint256 nftTokenId) internal {
     for (uint256 i = 0; i < accountsNFTlist.length; i++) {
             if(accountsNFTlist[i]==nftTokenId){
                 accountsNFTlist[i] = accountsNFTlist[accountsNFTlist.length-1];
-                accountsNFTlist.pop;
+                accountsNFTlist.pop();
+                break;
+
             }
-            break;
     }
 
 }

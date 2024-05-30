@@ -16,18 +16,17 @@ uint256 public constant STARTING_BALANCE=1 ether;
     function setUp() external {
         nft = new NFT();
         vm.deal(USER,STARTING_BALANCE);
-    }       
+    }  
+    
 
-function testmint() public{
+function testmint() public {
     vm.prank(USER);
-    console.log(USER);
-     uint256 ID= nft.mint("pudgy","pudypengiuns");
-     console.log("ID is :", ID);
-    uint256[] memory nftId = nft.getNFTByAddress(USER);
-    (string memory _name, string memory _description, address _owner)= nft.queryNFT(1);
-
-    assert(nftId[0]==1);
-    assert(address(USER)==_owner);
+    uint256 nftId = nft.mint("pudgy","pudypengiuns");    
+    (string memory _name, string memory _description, address _owner)= nft.queryNFT(nftId);
+    assertEq(_name,string("pudgy"));
+    assertEq(_description,string("pudypengiuns"));
+    assertEq(_owner,address(USER));    
+    assert(nftId==1);
 }
 
 function testNFTidIsZero() public{
@@ -37,14 +36,11 @@ function testNFTidIsZero() public{
 }
 function testNFTIDIsValid() public{
     vm.prank(USER);
-    console.log(USER);
-    uint256 ID= nft.mint("pudgy","pudypengiuns");
-    console.log("ID is :", ID);
-    (string memory _name, string memory _description, address _owner)= nft.queryNFT(1);
+    uint256 nftId= nft.mint("pudgy","pudypengiuns");
+    (string memory _name, string memory _description, address _owner)= nft.queryNFT(nftId);
     assertEq(_name,string("pudgy"));
     assertEq(_description,string("pudypengiuns"));
-    assertEq(_owner,address(USER));
-    
+    assertEq(_owner,address(USER));    
 }
 
 function testgetNFTbyAddress() public{
@@ -52,28 +48,60 @@ function testgetNFTbyAddress() public{
         vm.prank(USER);
         nft.mint("pudgy","pudypengiuns");
     }
-
     uint256[] memory alltokens = nft.getNFTByAddress(USER);
-    
     // Checking alltokens array has all 5 minted NFTs 
     assert(alltokens.length == 5);  
 }
 
-
-
-function testNFTisDeleted() public{
+function testTransfer() public {
     vm.startPrank(USER);
-    console.log(USER);
-
-    nft.mint("BAYC", "BAYC#1-LuCKY");
-    (string memory _name, string memory _description, address _owner) = nft.queryNFT(1);
-    console.log("Name :",_name);
-    console.log("Description :",_description);
-    console.log("Owner:",_owner);
-    nft.transfer(receiver, 1);
+    uint256 nftId = nft.mint("MAYC", "MAYC#1-Mutant");
+    (, , address _owner) = nft.queryNFT(nftId);
+    console.log("Current Owner of NFT is :",_owner);
+    nft.transfer(receiver, nftId);
+    (,,  _owner) = nft.queryNFT(nftId);
+    console.log("Current Owner of NFT is :",_owner);
+    assert(address(receiver)==_owner);
     vm.stopPrank();
-    uint256[] memory arr = nft.getNFTByAddress(receiver);
-    assert(arr[0]==1);
+
 }
+
+
+function testNFTisDeletedfromwalletofOldowner() public{
+    vm.startPrank(USER);
+    uint256 nftId = nft.mint("BAYC", "BAYC#1-LuCKY");
+    (,, address _owner) = nft.queryNFT(nftId);
+    console.log("Owner of the NFT before Transfer: ", _owner);
+    nft.transfer(receiver, nftId);
+    (,,  _owner) = nft.queryNFT(nftId);
+    console.log("New Owner of NFT is :",_owner);
+    vm.expectRevert();
+    assert(address(USER)==_owner);
+    vm.stopPrank();
+}
+
+
+function testMintAndTransfer() public {
+    // USER mints an NFT
+    vm.startPrank(USER);
+    uint256 nftId = nft.mint("Example NFT", "A unique example NFT");
+
+    // Check initial owner is USER
+    (string memory name, string memory description, address _owner) = nft.queryNFT(nftId);
+    assertEq(name, "Example NFT", "Name mismatch");
+    assertEq(description, "A unique example NFT", "Description mismatch");
+    assertEq(_owner, USER, "Initial owner is incorrect");
+
+    // USER transfers the NFT to someoneelse
+    nft.transfer(receiver, nftId);
+
+    // Check owner has been updated to Bob
+    (name, description, _owner) = nft.queryNFT(nftId);
+
+    assertEq(_owner, receiver, "Owner after transfer is incorrect");
+    vm.stopPrank();
+}
+
+
 
 }
