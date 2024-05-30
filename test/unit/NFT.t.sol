@@ -102,6 +102,16 @@ function testMintAndTransfer() public {
     vm.stopPrank();
 }
 
-
+function testburnNft() public {
+    vm.startPrank(USER);
+    uint256 nftId = nft.mint("Example NFT", "A unique example NFT");
+    (string memory name, string memory description, address _owner) = nft.queryNFT(nftId);
+    nft.burnNft(nftId);
+    ( name,   description,  _owner) = nft.queryNFT(nftId);
+    assert(bytes(name).length==0);
+    assert(bytes(description).length==0);
+    assert(_owner==address(0));
+    vm.stopPrank();
+}
 
 }
